@@ -1,0 +1,9 @@
+Minesweeper with no animation, no image, just code and number. 
+RULES: 
+- Type how many columns and rows you want to form your playground. (FIRST INPUT)
+- Type how many mines you want to play with (SECOND INPUT)
+- After that, you have to type the coordinate (in column - row order) that doesn't have mine in there.
+- If you can successfully do that, the game continues. Else, GAME OVER!!!.
+
+Last words: Have fun with my first ever so-called game project!
+
