@@ -1,4 +1,4 @@
-Minesweeper with no animation, no image, just code and number. 
+Minesweeper with no animation, no images or anything else. Just code and numbers. 
 RULES: 
 - Type how many columns and rows you want to form your playground. (FIRST INPUT)
 - Type how many mines you want to play with (SECOND INPUT)
