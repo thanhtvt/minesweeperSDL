@@ -1,2 +1,2 @@
-The project using SDL is "Bejeweled with SDL".
+The project using SDL is Minesweeper with SDL".
 
