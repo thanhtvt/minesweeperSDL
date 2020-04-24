@@ -2,42 +2,6 @@
 #include "Button.h"
 #include "Variables.h"
 
-void createTableWithMine ()
-{
-    srand(time(NULL));
-    int mine = 0;
-    for (int i = 0; i < ROW_SIZE; i++)
-    {
-        for (int j = 0; j < COLUMN_SIZE; j++)
-        {
-            sBoard[i][j] = 10;
-            board[i][j] = 0;
-        }
-    }
-    while (mine < MINE_COUNT)
-    {
-        int i = rand() % ROW_SIZE;
-        int j = rand() & COLUMN_SIZE;
-        if ( board[i][j] == 9 )
-        {
-            continue;
-        }
-        else
-        {
-            board[i][j] = 9;
-            mine++;
-            if (board[i+1][j] != 9) board[i+1][j]++;
-            if (board[i][j+1] != 9) board[i][j+1]++;
-            if (board[i-1][j] != 9) board[i-1][j]++;
-            if (board[i][j-1] != 9) board[i][j-1]++;
-            if (board[i+1][j+1] != 9) board[i+1][j+1]++;
-            if (board[i-1][j-1] != 9) board[i-1][j-1]++;
-            if (board[i-1][j+1] != 9) board[i-1][j+1]++;
-            if (board[i+1][j-1] != 9) board[i+1][j-1]++;
-        }
-    }
-}
-
 LButton::LButton()
 {
 	mPosition.x = 0;

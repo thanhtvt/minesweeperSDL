@@ -22,6 +22,9 @@ bool loadMedia();
 //Frees media and shuts down SDL
 void close();
 
+//Initializes playground
+void createTableWithMine ();
+
 int main( int argc, char* args[] )
 {
     srand(time(NULL));
@@ -49,6 +52,8 @@ int main( int argc, char* args[] )
 
 			//Event handler
 			SDL_Event e;
+
+			createTableWithMine();
 
 			//While application is running
 			while( !quit )
@@ -210,6 +215,42 @@ bool loadMedia()
 	}
 
 	return success;
+}
+
+void createTableWithMine ()
+{
+    srand(time(NULL));
+    int mine = 0;
+    for (int i = 0; i < ROW_SIZE; i++)
+    {
+        for (int j = 0; j < COLUMN_SIZE; j++)
+        {
+            sBoard[i][j] = 10;
+            board[i][j] = 0;
+        }
+    }
+    while (mine < MINE_COUNT)
+    {
+        int i = rand() % ROW_SIZE;
+        int j = rand() & COLUMN_SIZE;
+        if ( board[i][j] == 9 )
+        {
+            continue;
+        }
+        else
+        {
+            board[i][j] = 9;
+            mine++;
+            if (board[i+1][j] != 9) board[i+1][j]++;
+            if (board[i][j+1] != 9) board[i][j+1]++;
+            if (board[i-1][j] != 9) board[i-1][j]++;
+            if (board[i][j-1] != 9) board[i][j-1]++;
+            if (board[i+1][j+1] != 9) board[i+1][j+1]++;
+            if (board[i-1][j-1] != 9) board[i-1][j-1]++;
+            if (board[i-1][j+1] != 9) board[i-1][j+1]++;
+            if (board[i+1][j-1] != 9) board[i+1][j-1]++;
+        }
+    }
 }
 
 void close()
