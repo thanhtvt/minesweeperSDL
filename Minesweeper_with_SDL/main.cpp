@@ -25,10 +25,14 @@ void close();
 //Initializes playground
 void createTableWithMine ();
 
+//Check win flag
+bool checkWinning ();
+
+//Perform win/lose flag
+void flagManager();
+
 int main( int argc, char* args[] )
 {
-    srand(time(NULL));
-
 	//Start up SDL and create window
 	if( !init() )
 	{
@@ -45,10 +49,6 @@ int main( int argc, char* args[] )
 		{
 			//Main loop flag
 			bool quit = false;
-			bool gameOver = false;
-
-			//Winning flag
-			bool isWinning = false;
 
 			//Event handler
 			SDL_Event e;
@@ -59,26 +59,34 @@ int main( int argc, char* args[] )
 			while( !quit )
 			{
 			    //While game is not over yet
-			    while ( !gameOver && !quit )
+			    while ( !gameOver && !quit && !isWinning)
                 {
                     //Handle events on queue
                     while( SDL_PollEvent( &e ) != 0 )
                     {
                         //User requests quit
-                        if( e.type == SDL_QUIT )
+                        if( e.type == SDL_QUIT || e.key.keysym.sym == SDLK_ESCAPE)
                         {
                             quit = true;
                         }
-                        //Handle key press
-                        else if( e.type == SDL_KEYDOWN )
-                        {
 
+                        //Handle button events
+                        for(int i = 0; i < ROW_SIZE; i++)
+                        {
+                            for (int j = 0; j < COLUMN_SIZE; j++)
+                            {
+                                gButtons[i][j].handleEvent( &e );
+                            }
                         }
+                        isWinning = checkWinning();
                     }
 
                     //Clear screen
                     SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
                     SDL_RenderClear( gRenderer );
+
+                    //Render background
+                    gBackgroundTexture.render(0, 0);
 
                     //Render buttons
                     for( int i = 0; i < ROW_SIZE; i++ )
@@ -88,6 +96,9 @@ int main( int argc, char* args[] )
                             gButtons[i][j].render(i, j);
                         }
                     }
+
+                    //Perform win/lose flag
+                    flagManager();
 
                     //Update screen
                     SDL_RenderPresent( gRenderer );
@@ -104,6 +115,8 @@ int main( int argc, char* args[] )
 
 bool init()
 {
+    srand(time(NULL));
+
 	//Initialization flag
 	bool success = true;
 
@@ -166,6 +179,18 @@ bool loadMedia()
 	//Loading success flag
 	bool success = true;
 
+	//Load scene
+	if ( !gWinningTexture.loadFromFile( "Image/Winner.png" ) )
+    {
+        cout << "Failed to load winning texture!\n";
+        success = false;
+    }
+    if ( !gBackgroundTexture.loadFromFile( "Image/Background.png" ) )
+    {
+        cout << "Failed to load background texture!\n";
+        success = false;
+    }
+
 	//Load sprites
 	if( !gButtonSpriteSheetTexture.loadFromFile( "Image/Tiles.png" ) )
 	{
@@ -187,20 +212,20 @@ bool loadMedia()
         {
             for (int j = 0; j < COLUMN_SIZE; j++)
             {
-                gButtons[i][j].setPosition(i * TILE_SIZE, j * TILE_SIZE);
+                gButtons[i][j].setPosition(j * TILE_SIZE + DISTANCE_BETWEEN, i * TILE_SIZE + DISTANCE_BETWEEN);
             }
         }
     }
 
 	//Load sound effects
-	winner = Mix_LoadWAV( "Sounds/winner.wav" );
+	winner = Mix_LoadMUS( "Sounds/winner.wav" );
 	if( winner == NULL )
 	{
 		cout << "Failed to load winner sound effect! SDL_mixer Error: " << Mix_GetError() << endl;
 		success = false;
 	}
 
-	loser = Mix_LoadWAV( "Sounds/loser.wav" );
+	loser = Mix_LoadMUS( "Sounds/loser.wav" );
 	if( loser == NULL )
 	{
 		cout << "Failed to load loser sound effect! SDL_mixer Error: " << Mix_GetError() << endl;
@@ -232,7 +257,7 @@ void createTableWithMine ()
     while (mine < MINE_COUNT)
     {
         int i = rand() % ROW_SIZE;
-        int j = rand() & COLUMN_SIZE;
+        int j = rand() % COLUMN_SIZE;
         if ( board[i][j] == 9 )
         {
             continue;
@@ -241,14 +266,67 @@ void createTableWithMine ()
         {
             board[i][j] = 9;
             mine++;
-            if (board[i+1][j] != 9) board[i+1][j]++;
-            if (board[i][j+1] != 9) board[i][j+1]++;
-            if (board[i-1][j] != 9) board[i-1][j]++;
-            if (board[i][j-1] != 9) board[i][j-1]++;
-            if (board[i+1][j+1] != 9) board[i+1][j+1]++;
-            if (board[i-1][j-1] != 9) board[i-1][j-1]++;
-            if (board[i-1][j+1] != 9) board[i-1][j+1]++;
-            if (board[i+1][j-1] != 9) board[i+1][j-1]++;
+            if (board[i-1][j] != 9 && i > 0)
+                board[i-1][j]++;
+            if (board[i][j-1] != 9 && j > 0)
+                board[i][j-1]++;
+            if (board[i+1][j] != 9 && i < ROW_SIZE - 1)
+                board[i+1][j]++;
+            if (board[i][j+1] != 9 && j < COLUMN_SIZE - 1)
+                board[i][j+1]++;
+            if (board[i-1][j-1] != 9 && i > 0 && j > 0)
+                board[i-1][j-1]++;
+            if (board[i-1][j+1] != 9 && i > 0 && j < COLUMN_SIZE - 1)
+                board[i-1][j+1]++;
+            if (board[i+1][j-1] != 9 && j > 0 && i < ROW_SIZE - 1)
+                board[i+1][j-1]++;
+            if (board[i+1][j+1] != 9 && i < ROW_SIZE - 1 && j < COLUMN_SIZE - 1)
+                board[i+1][j+1]++;
+        }
+    }
+}
+
+bool checkWinning ()
+{
+    bool win = false;
+    if (countTileLeft == MINE_COUNT)
+    {
+        win = true;
+    }
+    return win;
+}
+
+void flagManager()
+{
+    //Check if win
+    if ( isWinning && !gameOver )
+    {
+        //Update screen
+        SDL_RenderPresent( gRenderer );
+
+        //Delay loading screen
+        SDL_Delay(500);
+
+        //Play victory music
+        Mix_PlayMusic(winner, 0);
+
+        //Render winning scene
+        gWinningTexture.render( 0, 0 );
+    }
+
+    //Check if lose
+    if ( gameOver )
+    {
+        //Play losing music
+        Mix_PlayMusic(loser, 0);
+
+        for( int i = 0; i < ROW_SIZE; i++ )
+        {
+            for ( int j = 0; j < COLUMN_SIZE; j++ )
+            {
+                sBoard[i][j] = board[i][j];
+                gButtons[i][j].render(i, j);
+            }
         }
     }
 }
@@ -259,8 +337,8 @@ void close()
 	gButtonSpriteSheetTexture.free();
 
 	//Free the sound effects
-	Mix_FreeChunk( winner );
-	Mix_FreeChunk( loser );
+	Mix_FreeMusic( winner );
+	Mix_FreeMusic( loser );
 	Mix_FreeChunk( click );
 	winner = NULL;
 	loser = NULL;

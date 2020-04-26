@@ -3,6 +3,9 @@
 #include "Variables.h"
 #include "Constances.h"
 
+//Reveal hidden tiles
+void reveal(int i, int j);
+
 //The mouse button
 class LButton
 {
