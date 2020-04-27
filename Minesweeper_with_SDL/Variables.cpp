@@ -12,6 +12,11 @@ Mix_Music *winner = NULL;
 Mix_Music *loser = NULL;
 Mix_Chunk *click = NULL;
 
+//Globally used font
+TTF_Font *gGameOver = NULL;
+TTF_Font *gPlayAgainWin = NULL;
+TTF_Font *gPlayAgainLose = NULL;
+
 //Mouse button texture
 SDL_Rect gSpriteClips[ BUTTON_SPRITE_TOTAL ];
 LTexture gButtonSpriteSheetTexture;
@@ -20,15 +25,20 @@ LTexture gButtonSpriteSheetTexture;
 LTexture gWinningTexture;
 LTexture gBackgroundTexture;
 
-//Buttons objects
-//LButton gButtons[ROW_SIZE][COLUMN_SIZE];
+//Rendered texture
+LTexture gTextTexture;
+LTexture gMineLeftTexture;
+LTexture gPlayAgainWinTexture;
+LTexture gPlayAgainLoseTexture;
 
 //Gameplay variables
-bool isRevealed;
 int countMineLeft = MINE_COUNT;
 int countTileLeft = ROW_SIZE * COLUMN_SIZE;
 bool gameOver = false;
 bool isWinning = false;
+
+//In memory text stream
+stringstream mineLeft;
 
 //Board with mine
 int board[ROW_SIZE][COLUMN_SIZE];

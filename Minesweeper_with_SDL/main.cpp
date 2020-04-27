@@ -1,9 +1,7 @@
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_mixer.h>
 #include <iostream>
 #include <ctime>
 #include <stdlib.h>
+#include <sstream>
 #include <string>
 #include "Texture.h"
 #include "Constances.h"
@@ -28,8 +26,14 @@ void createTableWithMine ();
 //Check win flag
 bool checkWinning ();
 
+//Render number of flag/mine left
+void mineManager();
+
 //Perform win/lose flag
 void flagManager();
+
+//Perform play again flag
+void playAgainManager(bool quitGame);
 
 int main( int argc, char* args[] )
 {
@@ -53,11 +57,11 @@ int main( int argc, char* args[] )
 			//Event handler
 			SDL_Event e;
 
-			createTableWithMine();
-
 			//While application is running
 			while( !quit )
 			{
+			    createTableWithMine();
+
 			    //While game is not over yet
 			    while ( !gameOver && !quit && !isWinning)
                 {
@@ -96,6 +100,8 @@ int main( int argc, char* args[] )
                             gButtons[i][j].render(i, j);
                         }
                     }
+                    //Render mine/flag left
+                    mineManager();
 
                     //Perform win/lose flag
                     flagManager();
@@ -103,6 +109,7 @@ int main( int argc, char* args[] )
                     //Update screen
                     SDL_RenderPresent( gRenderer );
                 }
+                playAgainManager(quit);
 			}
 		}
 	}
@@ -161,10 +168,17 @@ bool init()
 					success = false;
 				}
 
-				 //Initialize SDL_mixer
+                //Initialize SDL_mixer
 				if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
 				{
 				    cout << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << endl;
+					success = false;
+				}
+
+                //Initialize SDL_ttf
+				if( TTF_Init() == -1 )
+				{
+				    cout << "SDL_ttf could not initialize! SDL_ttf Error: " << TTF_GetError() << endl;
 					success = false;
 				}
 			}
@@ -178,6 +192,58 @@ bool loadMedia()
 {
 	//Loading success flag
 	bool success = true;
+
+	//Open the font
+	gGameOver = TTF_OpenFont( "Font/DTM-Sans.ttf", 40 );
+	if( gGameOver == NULL )
+	{
+	    cout << "Failed to load DTM-Sans font! SDL_ttf Error: " << TTF_GetError() << endl;
+		success = false;
+	}
+	else
+	{
+		//Render text
+		SDL_Color textColor = { 140, 140, 140 };
+		if( !gTextTexture.loadFromRenderedText( "GAME OVER :(", textColor ) )
+		{
+			cout << "Failed to render text texture!\n";
+			success = false;
+		}
+	}
+
+	gPlayAgainWin = TTF_OpenFont( "Font/DTM-Sans.ttf", 16 );
+	if( gPlayAgainWin == NULL )
+	{
+	    cout << "Failed to load DTM-Sans font! SDL_ttf Error: " << TTF_GetError() << endl;
+		success = false;
+	}
+	else
+    {
+        //Render text
+		SDL_Color playAgainWin = { 30, 100, 100 };
+		if( !gPlayAgainWinTexture.loadFromRenderedText( "Press s to play again!", playAgainWin ) )
+		{
+			cout << "Failed to render text texture!\n";
+			success = false;
+		}
+    }
+
+    gPlayAgainLose = TTF_OpenFont( "Font/DTM-Sans.ttf", 16 );
+    if( gPlayAgainLose == NULL )
+	{
+	    cout << "Failed to load DTM-Sans font! SDL_ttf Error: " << TTF_GetError() << endl;
+		success = false;
+	}
+	else
+    {
+        //Render text
+		SDL_Color playAgainLose = { 140, 140, 140 };
+		if( !gPlayAgainLoseTexture.loadFromRenderedText( "Press s to play again!", playAgainLose ) )
+		{
+			cout << "Failed to render text texture!\n";
+			success = false;
+		}
+    }
 
 	//Load scene
 	if ( !gWinningTexture.loadFromFile( "Image/Winner.png" ) )
@@ -296,6 +362,26 @@ bool checkWinning ()
     return win;
 }
 
+void mineManager()
+{
+    //Render text
+    if ( !gameOver && !isWinning )
+    {
+        //Set text color
+        SDL_Color textColor = { 140, 140, 140, 255 };
+
+        mineLeft.str ( "" );
+        mineLeft << "Mine left: " << countMineLeft;
+        if( !gMineLeftTexture.loadFromRenderedText( mineLeft.str().c_str(), textColor ) )
+        {
+            cout << "Unable to render mine left texture!\n";
+        }
+
+        //Render text
+        gMineLeftTexture.render( ( SCREEN_WIDTH - gMineLeftTexture.getWidth() ) / 2, 0 );
+    }
+}
+
 void flagManager()
 {
     //Check if win
@@ -312,11 +398,17 @@ void flagManager()
 
         //Render winning scene
         gWinningTexture.render( 0, 0 );
+
+        //Render playAgain
+        gPlayAgainWinTexture.render( ( SCREEN_WIDTH - gPlayAgainWinTexture.getWidth() ) / 2, SCREEN_HEIGHT - gPlayAgainWinTexture.getHeight() );
     }
 
     //Check if lose
     if ( gameOver )
     {
+        //Render game over text
+        gTextTexture.render( ( SCREEN_WIDTH - gTextTexture.getWidth() ) / 2, 0 );
+
         //Play losing music
         Mix_PlayMusic(loser, 0);
 
@@ -328,6 +420,35 @@ void flagManager()
                 gButtons[i][j].render(i, j);
             }
         }
+        //Render play again
+        gPlayAgainLoseTexture.render( ( SCREEN_WIDTH - gPlayAgainLoseTexture.getWidth() ) / 2, SCREEN_HEIGHT - gPlayAgainLoseTexture.getHeight() );
+    }
+}
+
+void playAgainManager(bool quitGame)
+{
+    //Event handler
+    SDL_Event e;
+
+    //Handle events on queue
+    while( SDL_PollEvent( &e ) != 0 )
+    {
+        //User requests play again
+        if( e.key.keysym.sym == SDLK_s )
+        {
+            //Stop the music
+            Mix_HaltMusic();
+
+            //Recreate constants
+            countMineLeft = MINE_COUNT;
+            countTileLeft = ROW_SIZE * COLUMN_SIZE;
+
+            //Recreate flag
+            gameOver = false;
+            isWinning = false;
+            quitGame = false;
+        }
+        else quitGame = true;
     }
 }
 
@@ -335,6 +456,18 @@ void close()
 {
 	//Free loaded images
 	gButtonSpriteSheetTexture.free();
+	gMineLeftTexture.free();
+	gBackgroundTexture.free();
+	gWinningTexture.free();
+	gTextTexture.free();
+
+	//Free global font
+	TTF_CloseFont( gGameOver );
+	TTF_CloseFont( gPlayAgainLose );
+	TTF_CloseFont( gPlayAgainWin );
+	gGameOver = NULL;
+	gPlayAgainLose = NULL;
+	gPlayAgainWin = NULL;
 
 	//Free the sound effects
 	Mix_FreeMusic( winner );

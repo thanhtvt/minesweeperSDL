@@ -1,8 +1,7 @@
 #pragma once
 
-#include <SDL.h>
 #include <SDL_mixer.h>
-#include <SDL_ttf.h>
+#include <sstream>
 #include "Texture.h"
 #include "Constances.h"
 #include "Button.h"
@@ -18,6 +17,11 @@ extern Mix_Music *winner;
 extern Mix_Music *loser;
 extern Mix_Chunk *click;
 
+//Globally used font
+extern TTF_Font *gGameOver;
+extern TTF_Font *gPlayAgainWin;
+extern TTF_Font *gPlayAgainLose;
+
 //Mouse button texture
 extern SDL_Rect gSpriteClips[ BUTTON_SPRITE_TOTAL ];
 extern LTexture gButtonSpriteSheetTexture;
@@ -26,15 +30,20 @@ extern LTexture gButtonSpriteSheetTexture;
 extern LTexture gWinningTexture;
 extern LTexture gBackgroundTexture;
 
-//Buttons objects
-//extern LButton gButtons[ROW_SIZE][COLUMN_SIZE];
+//Rendered texture
+extern LTexture gTextTexture;
+extern LTexture gMineLeftTexture;
+extern LTexture gPlayAgainWinTexture;
+extern LTexture gPlayAgainLoseTexture;
 
 //Gameplay variables
-extern bool isRevealed;
 extern int countMineLeft;
 extern int countTileLeft;
 extern bool gameOver;
 extern bool isWinning;
+
+//In memory text stream
+extern stringstream mineLeft;
 
 //Board with mine
 extern int board[ROW_SIZE][COLUMN_SIZE];

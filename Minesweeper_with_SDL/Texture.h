@@ -3,6 +3,7 @@
 #include <iostream>
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <cstring>
 
 using namespace std;
@@ -16,6 +17,9 @@ class LTexture
 
 		//Deallocates memory
 		~LTexture();
+
+		//Creates image from font string
+		bool loadFromRenderedText( string textureText, SDL_Color textColor );
 
 		//Loads image at specified path
 		bool loadFromFile( string path );

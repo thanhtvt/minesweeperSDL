@@ -6,6 +6,10 @@ void reveal(int i, int j)
 {
     if (sBoard[i][j] == 10 || sBoard[i][j] == 11)
     {
+        if (sBoard[i][j] == 11)
+        {
+            countMineLeft++;
+        }
         sBoard[i][j] = board[i][j];
         countTileLeft--;
         if (sBoard[i][j] == 0)

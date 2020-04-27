@@ -15,6 +15,40 @@ LTexture::~LTexture()
 	free();
 }
 
+bool LTexture::loadFromRenderedText( string textureText, SDL_Color textColor )
+{
+	//Get rid of preexisting texture
+	free();
+
+	//Render text surface
+	SDL_Surface* textSurface = TTF_RenderText_Solid( gGameOver, textureText.c_str(), textColor );
+	if( textSurface == NULL )
+	{
+	    cout << "Unable to render text surface! SDL_ttf Error: " << TTF_GetError() << endl;
+	}
+	else
+	{
+		//Create texture from surface pixels
+        mTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
+		if( mTexture == NULL )
+		{
+		    cout << "Unable to create texture from rendered text! SDL Error: " << SDL_GetError() << endl;
+		}
+		else
+		{
+			//Get image dimensions
+			mWidth = textSurface->w;
+			mHeight = textSurface->h;
+		}
+
+		//Get rid of old surface
+		SDL_FreeSurface( textSurface );
+	}
+
+	//Return success
+	return mTexture != NULL;
+}
+
 bool LTexture::loadFromFile( string path )
 {
 	//Get rid of preexisting texture
