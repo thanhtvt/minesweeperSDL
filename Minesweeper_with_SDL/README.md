@@ -4,9 +4,9 @@ This is the classic version of Minesweeper (made with SDL).
 DISCLAIMER  
 ----------  
   
-* NOTE: I DO NOT OWN THESE IMAGES, SOUND EFFECTS AND FONTS. IT'S ORIGINALLY OWNED BY THEIR RESPECTIVE OWNERS!  
+* I DO NOT OWN THESE IMAGES, SOUND EFFECTS AND FONT. IT'S ORIGINALLY OWNED BY THEIR RESPECTIVE OWNERS!  
 * The font is available and free to use. You can find it at: https://fontmeme.com/fonts/determination-font/  
-* Special thanks to: freepik.com for the winning background!. You can find it at: https://bit.ly/_freepik  
+* Special thanks to: freepik for the winning background!. You can find it at: https://bit.ly/_freepik  
   
 ------------    
 INSTALLATION  
