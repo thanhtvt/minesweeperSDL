@@ -104,11 +104,11 @@ void LButton::handleEvent( SDL_Event* e )
                     }
                     case SDL_BUTTON_RIGHT:
                     {
-                        if (countMineLeft == 0) break;
                         if (sBoard[i][j] >= 10)
                         {
                             if (sBoard[i][j] == 10)
                             {
+                                if (countMineLeft == 0) break;
                                 sBoard[i][j] = 11;
                                 countMineLeft--;
                             }
