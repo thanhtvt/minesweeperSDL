@@ -33,7 +33,7 @@ void mineManager();
 void flagManager();
 
 //Perform play again flag
-void playAgainManager(bool quitGame);
+void playAgainManager(bool &quitGame);
 
 int main( int argc, char* args[] )
 {
@@ -425,7 +425,7 @@ void flagManager()
     }
 }
 
-void playAgainManager(bool quitGame)
+void playAgainManager(bool &quitGame)
 {
     //Event handler
     SDL_Event e;
@@ -448,7 +448,7 @@ void playAgainManager(bool quitGame)
             isWinning = false;
             quitGame = false;
         }
-        else quitGame = true;
+        else if ( e.key.keysym.sym == SDLK_ESCAPE ) quitGame = true;
     }
 }
 
