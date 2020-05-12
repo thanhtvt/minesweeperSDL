@@ -6,8 +6,6 @@
 //Reveal hidden tiles
 void reveal(int i, int j);
 
-void openWhenDoubClick(int i, int j);
-
 //The mouse button
 class LButton
 {

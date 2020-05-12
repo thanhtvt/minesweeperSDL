@@ -33,82 +33,6 @@ void reveal(int i, int j)
     }
 }
 
-void openWhenDoubClick(int i, int j)
-{
-    if (board[i+1][j] < 10 && sBoard[i+1][j] != 11 && i < ROW_SIZE - 1)
-    {
-        if (board[i+1][j] == 9)
-        {
-            gameOver = true;
-            return;
-        }
-        reveal(i+1, j);
-    }
-    if (board[i-1][j] < 10 && sBoard[i-1][j] != 11 && i > 0)
-    {
-        if (board[i-1][j] == 9)
-        {
-            gameOver = true;
-            return;
-        }
-        reveal(i-1, j);
-    }
-    if (board[i][j+1] < 10 && sBoard[i][j+1] != 11 && j < COLUMN_SIZE - 1)
-    {
-        if (board[i][j+1] == 9)
-        {
-            gameOver = true;
-            return;
-        }
-        reveal(i, j+1);
-    }
-    if (board[i][j-1] < 10 && sBoard[i][j-1] != 11 && j > 0)
-    {
-        if (board[i][j-1] == 9)
-        {
-            gameOver = true;
-            return;
-        }
-        reveal(i, j-1);
-    }
-    if (board[i+1][j+1] < 10 && sBoard[i][j+1] != 11 && j < COLUMN_SIZE - 1 && i < ROW_SIZE - 1)
-    {
-        if (board[i+1][j+1] == 9)
-        {
-            gameOver = true;
-            return;
-        }
-        reveal(i+1, j+1);
-    }
-    if (board[i-1][j-1] < 10 && sBoard[i-1][j-1] != 11 && j > 0 && i > 0)
-    {
-        if (board[i-1][j-1] == 9)
-        {
-            gameOver = true;
-            return;
-        }
-        reveal(i-1, j-1);
-    }
-    if (board[i-1][j+1] < 10 && sBoard[i-1][j+1] != 11 && j < COLUMN_SIZE - 1 && i > 0)
-    {
-        if (board[i-1][j+1] == 9)
-        {
-            gameOver = true;
-            return;
-        }
-        reveal(i-1, j+1);
-    }
-    if (board[i+1][j-1] < 10 && sBoard[i+1][j-1] != 11 && j > 0 && i < ROW_SIZE - 1)
-    {
-        if (board[i+1][j-1] == 9)
-        {
-            gameOver = true;
-            return;
-        }
-        reveal(i+1, j-1);
-    }
-}
-
 LButton::LButton()
 {
 	mPosition.x = 0;
@@ -171,10 +95,6 @@ void LButton::handleEvent( SDL_Event* e )
                     case SDL_BUTTON_LEFT:
                     {
                         reveal(i, j);
-                        if (board[i][j] < 10)
-                        {
-                            openWhenDoubClick(i, j);
-                        }
                         if (board[i][j] == 9)
                         {
                             gameOver = true;
