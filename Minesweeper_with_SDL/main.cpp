@@ -75,7 +75,7 @@ int main( int argc, char* args[] )
                         }
 
                         //Handle button events
-                        for(int i = 0; i < ROW_SIZE; i++)
+                        for (int i = 0; i < ROW_SIZE; i++)
                         {
                             for (int j = 0; j < COLUMN_SIZE; j++)
                             {
@@ -109,7 +109,8 @@ int main( int argc, char* args[] )
                     //Update screen
                     SDL_RenderPresent( gRenderer );
                 }
-                playAgainManager(quit);
+                //Check play again flag
+                playAgainManager( quit );
 			}
 		}
 	}
@@ -122,8 +123,6 @@ int main( int argc, char* args[] )
 
 bool init()
 {
-    srand(time(NULL));
-
 	//Initialization flag
 	bool success = true;
 
@@ -370,6 +369,7 @@ void mineManager()
         //Set text color
         SDL_Color textColor = { 140, 140, 140, 255 };
 
+        //Erase the buffer
         mineLeft.str ( "" );
         mineLeft << "Mine left: " << countMineLeft;
         if( !gMineLeftTexture.loadFromRenderedText( mineLeft.str().c_str(), textColor ) )

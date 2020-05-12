@@ -1,5 +1,4 @@
 #include "Variables.h"
-#include "Constances.h"
 
 //The window we'll be rendering to
 SDL_Window* gWindow = NULL;

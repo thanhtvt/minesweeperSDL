@@ -6,6 +6,8 @@
 //Reveal hidden tiles
 void reveal(int i, int j);
 
+void openWhenDoubClick(int i, int j);
+
 //The mouse button
 class LButton
 {
@@ -26,3 +28,4 @@ class LButton
 		//Top left position
 		SDL_Point mPosition;
 };
+

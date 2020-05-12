@@ -54,4 +54,3 @@ extern int sBoard[ROW_SIZE][COLUMN_SIZE];
 
 
 
-
